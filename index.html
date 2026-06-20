@@ -193,13 +193,22 @@
             padding:25px;
         }
         .card-content h3{
-            font-size:28px;
+            font-size:24px;
             margin-bottom:12px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
         }
         .card-content p{
             color:#cbd5e1;
             margin-bottom:18px;
             line-height:1.6;
+            height: 75px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
         }
         .meta-tag {
             display: inline-block;
@@ -442,8 +451,11 @@
 
 <script>
 const destinations = [
+    // ==========================================
+    // GANDAKI PROVINCE (10 NODES)
+    // ==========================================
     {
-        name: "Pokhara",
+        name: "Pokhara Lakeside",
         category: "Nature & Lakes",
         district: "Kaski",
         province: "Gandaki",
@@ -454,6 +466,109 @@ const destinations = [
         image: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?q=80&w=1200&auto=format&fit=crop"
     },
     {
+        name: "Annapurna Base Camp",
+        category: "Trekking Route",
+        district: "Kaski",
+        province: "Gandaki",
+        price: 450,
+        description: "A spectacular high-altitude walk tucked straight into a massive wall of world peaks.",
+        lat: 28.5310,
+        lon: 83.8780,
+        image: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Muktinath Temple",
+        category: "Religious Site",
+        district: "Mustang",
+        province: "Gandaki",
+        price: 350,
+        description: "Sacred Vishnu temple located at an altitude of 3,710 meters at the foot of Thorong La pass.",
+        lat: 28.8166,
+        lon: 83.8715,
+        image: "https://images.unsplash.com/photo-1605640840605-14ac1855827b?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Gorkha Durbar",
+        category: "Heritage Site",
+        district: "Gorkha",
+        province: "Gandaki",
+        price: 90,
+        description: "The historical fortified palace birthplace of King Prithvi Narayan Shah, founder of modern Nepal.",
+        lat: 28.0051,
+        lon: 84.6367,
+        image: "https://images.unsplash.com/photo-1508193638397-1c4234db14d8?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Bandipur Old Town",
+        category: "Heritage Site",
+        district: "Tanahun",
+        province: "Gandaki",
+        price: 110,
+        description: "A living museum of Newari culture with beautifully preserved traditional architecture and streets.",
+        lat: 27.9405,
+        lon: 84.4140,
+        image: "https://images.unsplash.com/photo-1540959733332-eab4deceeaf7?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Ghandruk Village",
+        category: "Nature & Lakes",
+        district: "Kaski",
+        province: "Gandaki",
+        price: 130,
+        description: "A gorgeous Gurung cultural settlement showcasing stone houses and unmatched views of Machapuchare.",
+        lat: 28.3745,
+        lon: 83.8066,
+        image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Tilicho Lake",
+        category: "Nature & Lakes",
+        district: "Manang",
+        province: "Gandaki",
+        price: 480,
+        description: "One of the highest lakes in the world, sitting majestically at 4,919 meters in the Annapurna range.",
+        lat: 28.6894,
+        lon: 83.8522,
+        image: "https://images.unsplash.com/photo-1533105079780-92b9be482077?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Dhorpatan Hunting Reserve",
+        category: "Adventure & Wildlife",
+        district: "Baglung",
+        province: "Gandaki",
+        price: 400,
+        description: "The only controlled hunting reserve in Nepal, home to the exclusive blue sheep and scenic meadows.",
+        lat: 28.5392,
+        lon: 83.0234,
+        image: "https://images.unsplash.com/photo-1516426122078-c23e76319801?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Poon Hill Track",
+        category: "Trekking Route",
+        district: "Myagdi",
+        province: "Gandaki",
+        price: 220,
+        description: "World-class sunrise viewpoint capturing the entire Dhaulagiri and Annapurna Himalayan massifs.",
+        lat: 28.4001,
+        lon: 83.7003,
+        image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Triveni Dham",
+        category: "Religious Site",
+        district: "Nawalpur",
+        province: "Gandaki",
+        price: 80,
+        description: "A holy river confluence site drawing thousands of pilgrims for ritual bathing and meditation.",
+        lat: 27.4421,
+        lon: 83.9185,
+        image: "https://images.unsplash.com/photo-1545205597-3d9d02c29597?q=80&w=1200&auto=format&fit=crop"
+    },
+
+    // ==========================================
+    // BAGMATI PROVINCE (10 NODES)
+    // ==========================================
+    {
         name: "Kathmandu Durbar Square",
         category: "Heritage Site",
         district: "Kathmandu",
@@ -463,17 +578,6 @@ const destinations = [
         lat: 27.7042,
         lon: 85.3072,
         image: "https://images.unsplash.com/photo-1605640840605-14ac1855827b?q=80&w=1200&auto=format&fit=crop"
-    },
-    {
-        name: "Lumbini Maya Devi Temple",
-        category: "Religious Site",
-        district: "Rupandehi",
-        province: "Lumbini",
-        price: 200,
-        description: "The universally revered structural birthplace grounds of Gautama Lord Buddha.",
-        lat: 27.4833,
-        lon: 83.2760,
-        image: "https://images.unsplash.com/photo-1589308078059-be1415eab4c3?q=80&w=1200&auto=format&fit=crop"
     },
     {
         name: "Chitwan National Park",
@@ -487,6 +591,212 @@ const destinations = [
         image: "https://images.unsplash.com/photo-1516426122078-c23e76319801?q=80&w=1200&auto=format&fit=crop"
     },
     {
+        name: "Pashupatinath Temple",
+        category: "Religious Site",
+        district: "Kathmandu",
+        province: "Bagmati",
+        price: 100,
+        description: "The supreme sacred dynamic temple system complex dedicated to Lord Shiva along the Bagmati River.",
+        lat: 27.7104,
+        lon: 85.3487,
+        image: "https://images.unsplash.com/photo-1561361530-c1130522db9c?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Langtang Valley Path",
+        category: "Trekking Route",
+        district: "Rasuwa",
+        province: "Bagmati",
+        price: 380,
+        description: "A gorgeous alpine tracking gorge closely bounded by towering ice walls and Tamang settlements.",
+        lat: 28.2173,
+        lon: 85.5674,
+        image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Boudhanath Stupa",
+        category: "Religious Site",
+        district: "Kathmandu",
+        province: "Bagmati",
+        price: 50,
+        description: "One of the largest spherical stupas in the world, anchoring Tibetan Buddhism within Kathmandu.",
+        lat: 27.7215,
+        lon: 85.3620,
+        image: "https://images.unsplash.com/photo-1545205597-3d9d02c29597?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Bhaktapur Durbar Square",
+        category: "Heritage Site",
+        district: "Bhaktapur",
+        province: "Bagmati",
+        price: 130,
+        description: "An open-air museum of medieval art and structural layout styling, famous for pottery and woodcarvings.",
+        lat: 27.6722,
+        lon: 85.4278,
+        image: "https://images.unsplash.com/photo-1508193638397-1c4234db14d8?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Patan Durbar Square",
+        category: "Heritage Site",
+        district: "Lalitpur",
+        province: "Bagmati",
+        price: 120,
+        description: "Marvel of Newar architecture marvel filled with ancient stone carvings, bronze structures, and courtyards.",
+        lat: 27.6744,
+        lon: 85.3253,
+        image: "https://images.unsplash.com/photo-1540959733332-eab4deceeaf7?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Swayambhunath Stupa",
+        category: "Religious Site",
+        district: "Kathmandu",
+        province: "Bagmati",
+        price: 60,
+        description: "The ancient hilltop 'Monkey Temple' providing complete geographical cross-section views of Kathmandu.",
+        lat: 27.7149,
+        lon: 85.2904,
+        image: "https://images.unsplash.com/photo-1589308078059-be1415eab4c3?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Nagarkot Ridge View",
+        category: "Nature & Lakes",
+        district: "Bhaktapur",
+        province: "Bagmati",
+        price: 95,
+        description: "Premium panoramic ridge viewpoint famous for sunrise framing views of Mount Everest and the Central Himalaya.",
+        lat: 27.7124,
+        lon: 85.5230,
+        image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Shivapuri National Park",
+        category: "Adventure & Wildlife",
+        district: "Kathmandu",
+        province: "Bagmati",
+        price: 70,
+        description: "A wild forest watershed reserve safeguarding rare orchid species, leopards, and tracking trails.",
+        lat: 27.8012,
+        lon: 85.3855,
+        image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1200&auto=format&fit=crop"
+    },
+
+    // ==========================================
+    // LUMBINI PROVINCE (10 NODES)
+    // ==========================================
+    {
+        name: "Lumbini Maya Devi Temple",
+        category: "Religious Site",
+        district: "Rupandehi",
+        province: "Lumbini",
+        price: 200,
+        description: "The universally revered structural birthplace grounds of Gautama Lord Buddha.",
+        lat: 27.4833,
+        lon: 83.2760,
+        image: "https://images.unsplash.com/photo-1589308078059-be1415eab4c3?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Bardia National Park",
+        category: "Adventure & Wildlife",
+        district: "Bardia",
+        province: "Lumbini",
+        price: 250,
+        description: "The largest undisturbed wilderness in lowland Terai, safeguarding wild Royal Bengal Tigers.",
+        lat: 28.4639,
+        lon: 81.4553,
+        image: "https://images.unsplash.com/photo-1516426122078-c23e76319801?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Tansen Palpa Town",
+        category: "Heritage Site",
+        district: "Palpa",
+        province: "Lumbini",
+        price: 100,
+        description: "A charming hill town famous for traditional Dhaka weaving fabrics and Rani Mahal palace ruins.",
+        lat: 27.8682,
+        lon: 83.5484,
+        image: "https://images.unsplash.com/photo-1508193638397-1c4234db14d8?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Jagadishpur Wetland",
+        category: "Nature & Lakes",
+        district: "Kapilvastu",
+        province: "Lumbini",
+        price: 85,
+        description: "A massive, Ramsar-listed reservoir crucial for thousands of migratory bird species.",
+        lat: 27.6162,
+        lon: 83.1022,
+        image: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Swargadwari Complex",
+        category: "Religious Site",
+        district: "Pyuthan",
+        province: "Lumbini",
+        price: 140,
+        description: "Hilltop temple sanctuary famous for its holy eternal fire and Vedic sacrificial altars.",
+        lat: 28.0831,
+        lon: 82.6953,
+        image: "https://images.unsplash.com/photo-1545205597-3d9d02c29597?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Tilaurakot Fort Palace",
+        category: "Heritage Site",
+        district: "Kapilvastu",
+        province: "Lumbini",
+        price: 110,
+        description: "Archaeological ruins of the ancient capital of the Shakya kingdom, where Prince Siddhartha lived.",
+        lat: 27.5739,
+        lon: 83.0061,
+        image: "https://images.unsplash.com/photo-1605640840605-14ac1855827b?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Banke National Park",
+        category: "Adventure & Wildlife",
+        district: "Banke",
+        province: "Lumbini",
+        price: 160,
+        description: "A vital tiger conservation habitat link connected directly into a wider cross-border ecosystem grid.",
+        lat: 28.1824,
+        lon: 81.9322,
+        image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Rani Mahal Palace",
+        category: "Heritage Site",
+        district: "Palpa",
+        province: "Lumbini",
+        price: 125,
+        description: "The 'Taj Mahal of Nepal' built directly over a sheer rock face along the emerald Kali Gandaki River.",
+        lat: 27.9254,
+        lon: 83.5264,
+        image: "https://images.unsplash.com/photo-1540959733332-eab4deceeaf7?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Satyawati Lake",
+        category: "Nature & Lakes",
+        district: "Palpa",
+        province: "Lumbini",
+        price: 90,
+        description: "A mysterious religious forest lake famous for nocturnal pilgrimage shouting rituals.",
+        lat: 27.7550,
+        lon: 83.5822,
+        image: "https://images.unsplash.com/photo-1533105079780-92b9be482077?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Jaljala Mountain Route",
+        category: "Trekking Route",
+        district: "Rolpa",
+        province: "Lumbini",
+        price: 320,
+        description: "An off-the-beaten-path mountain track offering breathtaking views of the Dhaulagiri range and rich wetlands.",
+        lat: 28.5122,
+        lon: 82.6841,
+        image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1200&auto=format&fit=crop"
+    },
+
+    // ==========================================
+    // KOSHI PROVINCE (10 NODES)
+    // ==========================================
+    {
         name: "Everest Base Camp Route",
         category: "Trekking Route",
         district: "Solukhumbu",
@@ -496,6 +806,105 @@ const destinations = [
         lat: 27.9881,
         lon: 86.9250,
         image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Pathibhara Devi Temple",
+        category: "Religious Site",
+        district: "Taplejung",
+        province: "Koshi",
+        price: 240,
+        description: "A highly revered mountain hilltop shrine sitting at 3,794 meters, granting powerful wishes.",
+        lat: 27.4255,
+        lon: 87.7722,
+        image: "https://images.unsplash.com/photo-1545205597-3d9d02c29597?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Koshi Tappu Reserve",
+        category: "Adventure & Wildlife",
+        district: "Sunsari",
+        province: "Koshi",
+        price: 170,
+        description: "Beautiful riverine mudflats safeguarding the last remaining population of wild water buffaloes.",
+        lat: 26.6562,
+        lon: 86.9944,
+        image: "https://images.unsplash.com/photo-1516426122078-c23e76319801?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Ilam Tea Gardens",
+        category: "Nature & Lakes",
+        district: "Ilam",
+        province: "Koshi",
+        price: 130,
+        description: "Rolling velvet tea estates, misty landscapes, and rich cultural biodiversity.",
+        lat: 26.9113,
+        lon: 87.9238,
+        image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Barahachhetra Temple",
+        category: "Religious Site",
+        district: "Sunsari",
+        province: "Koshi",
+        price: 80,
+        description: "Sacred Varaha incarnation temple located at the dynamic junction of Sapta Koshi river forks.",
+        lat: 26.8741,
+        lon: 87.1512,
+        image: "https://images.unsplash.com/photo-1589308078059-be1415eab4c3?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Makalu Barun Valley",
+        category: "Trekking Route",
+        district: "Sankhuwasabha",
+        province: "Koshi",
+        price: 460,
+        description: "An isolated trail system showcasing outstanding deep green gorges and glaciers beneath Mount Makalu.",
+        lat: 27.7012,
+        lon: 87.1524,
+        image: "https://images.unsplash.com/photo-1533105079780-92b9be482077?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Mai Pokhari Lake",
+        category: "Nature & Lakes",
+        district: "Ilam",
+        province: "Koshi",
+        price: 110,
+        description: "A star-shaped holy wetland lake surrounded by pristine, dense emerald pine forests.",
+        lat: 27.0064,
+        lon: 87.9312,
+        image: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Halesi Mahadev Cave",
+        category: "Religious Site",
+        district: "Khotang",
+        province: "Koshi",
+        price: 190,
+        description: "The 'Pashupatinath of Eastern Nepal' located inside a massive natural limestone cave structure.",
+        lat: 27.1945,
+        lon: 86.6231,
+        image: "https://images.unsplash.com/photo-1561361530-c1130522db9c?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Bhedetar Hill Station",
+        category: "Nature & Lakes",
+        district: "Dhankuta",
+        province: "Koshi",
+        price: 90,
+        description: "A popular hill station famed for its continuous cool breeze, dense fog, and mountain views.",
+        lat: 26.8525,
+        lon: 87.3312,
+        image: "https://images.unsplash.com/photo-1540959733332-eab4deceeaf7?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Kanchenjunga Base Route",
+        category: "Trekking Route",
+        district: "Taplejung",
+        province: "Koshi",
+        price: 550,
+        description: "Wild wilderness exploration route leading to the base of the world's third highest peak.",
+        lat: 27.7022,
+        lon: 88.1466,
+        image: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=1200&auto=format&fit=crop"
     }
 ];
 
@@ -508,10 +917,10 @@ const terrainMap = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png
 let mockProvincesGeoJSON = {
     "type": "FeatureCollection",
     "features": [
-        { "type": "Feature", "properties": { "name": "Gandaki Province" }, "geometry": { "type": "Polygon", "coordinates": [[[83.2, 27.9], [84.6, 27.9], [84.6, 28.9], [83.2, 28.9], [83.2, 27.9]]] } },
-        { "type": "Feature", "properties": { "name": "Bagmati Province" }, "geometry": { "type": "Polygon", "coordinates": [[[84.8, 27.2], [86.2, 27.2], [86.2, 28.3], [84.8, 28.3], [84.8, 27.2]]] } },
-        { "type": "Feature", "properties": { "name": "Lumbini Province" }, "geometry": { "type": "Polygon", "coordinates": [[[82.5, 27.3], [83.9, 27.3], [83.9, 28.1], [82.5, 28.1], [82.5, 27.3]]] } },
-        { "type": "Feature", "properties": { "name": "Koshi Province" }, "geometry": { "type": "Polygon", "coordinates": [[[86.3, 26.4], [88.2, 26.4], [88.2, 28.0], [86.3, 28.0], [86.3, 26.4]]] } }
+        { "type": "Feature", "properties": { "name": "Gandaki Province" }, "geometry": { "type": "Polygon", "coordinates": [[[83.0, 27.5], [85.0, 27.5], [85.0, 29.2], [83.0, 29.2], [83.0, 27.5]]] } },
+        { "type": "Feature", "properties": { "name": "Bagmati Province" }, "geometry": { "type": "Polygon", "coordinates": [[[84.5, 27.0], [86.5, 27.0], [86.5, 28.5], [84.5, 28.5], [84.5, 27.0]]] } },
+        { "type": "Feature", "properties": { "name": "Lumbini Province" }, "geometry": { "type": "Polygon", "coordinates": [[[81.0, 27.3], [84.0, 27.3], [84.0, 28.8], [81.0, 28.8], [81.0, 27.3]]] } },
+        { "type": "Feature", "properties": { "name": "Koshi Province" }, "geometry": { "type": "Polygon", "coordinates": [[[86.0, 26.3], [88.5, 26.3], [88.5, 28.2], [86.0, 28.2], [86.0, 26.3]]] } }
     ]
 };
 
@@ -522,7 +931,7 @@ const localLevelLayer = L.layerGroup();
 
 // Initialize Map with layers loaded by default
 const map = L.map('map', {
-    center: [28.3949, 84.1240],
+    center: [27.8500, 85.3000],
     zoom: 7,
     layers: [openStreetMap, provinceLayer, districtLayer, localLevelLayer]
 });
@@ -545,7 +954,7 @@ function addGeoJsonWithLabels(geojson, targetLayer) {
         style: { 
             color: "#38bdf8", 
             weight: 2, 
-            fillOpacity: 0.05, 
+            fillOpacity: 0.03, 
             dashArray: "3" 
         },
         onEachFeature: function (feature, layer) {
@@ -619,7 +1028,7 @@ function displayDestinations(data) {
                 <h4 style="color:#38bdf8; margin:0 0 4px 0;">${d.name}</h4>
                 <small style="color:#cbd5e1;"><b>Category:</b> ${d.category}</small><br>
                 <small style="color:#cbd5e1;"><b>Region:</b> ${d.district}, ${d.province}</small><br>
-                <p style="font-size:12px; margin:6px 0; color:#cbd5e1;">${d.description}</p>
+                <p style="font-size:12px; margin:6px 0; color:#cbd5e1; max-height: 50px; overflow: hidden;">${d.description}</p>
                 <img src="${d.image}" class="popup-img">
                 <button onclick="checkPointInPolygon(${d.lat}, ${d.lon}, '${d.name}')" style="margin-top:8px; width:100%; padding:6px; font-size:11px; background:#10b981; border:none; border-radius:6px; color:white; cursor:pointer; font-weight:500;">Run Topology Audit</button>
             </div>
@@ -643,8 +1052,9 @@ function filterData() {
     displayDestinations(filtered);
 }
 
+// Populate Dropdown selector
 destinations.forEach(d => {
-    destinationSelect.innerHTML += `<option value="${d.name}">${d.name}</option>`;
+    destinationSelect.innerHTML += `<option value="${d.name}">${d.name} (${d.province})</option>`;
 });
 
 function showLocation(lat, lon) {
@@ -686,7 +1096,7 @@ function toggleBufferZone() {
         destinations.forEach(d => {
             const point = turf.point([d.lon, d.lat]);
             const buffered = turf.buffer(point, 20, {units: 'kilometers'});
-            L.geoJSON(buffered, { style: { color: "#ff0055", weight: 2, fillColor: "#ff0055", fillOpacity: 0.12 } }).addTo(bufferLayer);
+            L.geoJSON(buffered, { style: { color: "#ff0055", weight: 2, fillColor: "#ff0055", fillOpacity: 0.08 } }).addTo(bufferLayer);
         });
         btn.classList.add("active");
         gisStatusText.innerText = "Applied 20KM spatial boundary buffer polygons around all coordinates.";
@@ -726,7 +1136,18 @@ function showRoute(destLat, destLon, destName) {
             routeInfo.innerHTML = `📍 Route Analysis: Origin &rarr; <b>${destName}</b><br><br>🚗 Calculated Path Route Length Dimension: <b>${distanceKM.toFixed(2)} km</b>`;
             goTo('map-section');
         }, function(error) {
-            alert("Location tracking authorization denied or response timed out.");
+            alert("Location tracking authorization denied or response timed out. Plotting using fallback center coordinates.");
+            // Fallback route routing from Kathmandu center if geo tracker fails
+            if (routingControl) map.removeControl(routingControl);
+            routingControl = L.Routing.control({
+                waypoints: [ L.latLng(27.7172, 85.3240), L.latLng(destLat, destLon) ],
+                router: L.Routing.osrmv1({ serviceUrl: 'https://router.project-osrm.org/route/v1' }),
+                lineOptions: { styles: [{ color: '#38bdf8', opacity: 0.9, weight: 6 }] },
+                routeWhileDragging: false,
+                show: false,
+                createMarker: function() { return null; }
+            }).addTo(map);
+            goTo('map-section');
         }, { enableHighAccuracy: true });
     }
 }
