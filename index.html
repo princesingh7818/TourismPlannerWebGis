@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nepal Tourism Route Planner & Advanced GIS Toolkit</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:'Poppins',sans-serif;
+        }
+        html{
+            scroll-behavior:smooth;
+        }
+        body{
+            background:#020617;
+            color:white;
+            overflow-x:hidden;
+        }
+
+        /* NAVBAR */
+        nav{
+            position:fixed;
+            top:0;
+            width:100%;
+            padding:12px 5%;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            background:rgba(0,0,0,0.45);
+            backdrop-filter:blur(12px);
+            z-index:1000;
+        }
+        .logo{
+            font-size:28px;
+            font-weight:700;
+            color:#38bdf8;
+        }
+        nav ul{
+            list-style:none;
+            display:flex;
+            gap:30px;
+        }
+        nav ul li{
+            cursor:pointer;
+            transition:0.3s;
+        }
+        nav ul li:hover{
+            color:#38bdf8;
+        }
+
+        /* HERO */
+        .hero{
+            height:100vh;
+            background: linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1528127269322-539801943592?q=80&w=1600&auto=format&fit=crop');
+            background-size:cover;
+            background-position:center;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            text-align:center;
+            padding:20px;
+        }
+        .hero-content h1{
+            font-size:clamp(36px,8vw,75px);
+            margin-bottom:20px;
+        }
+        .hero-content span{
+            color:#38bdf8;
+        }
+        .hero-content p{
+            font-size:clamp(14px,4vw,22px);
+            color:#e2e8f0;
+            margin-bottom:35px;
+        }
+        .hero-btn{
+            padding:16px 40px;
+            border:none;
+            border-radius:50px;
+            background:linear-gradient(45deg,#00b4d8,#2563eb);
+            color:white;
+            font-size:18px;
+            cursor:pointer;
+            transition:0.4s;
+            box-shadow:0 0 20px rgba(0,180,216,0.4);
+        }
+        .hero-btn:hover{
+            transform:translateY(-5px) scale(1.05);
+        }
+
+        /* SECTION */
+        section{
+            padding:100px 8%;
+        }
+        .section-title{
+            text-align:center;
+            font-size:45px;
+            margin-bottom:20px;
+        }
+        .section-subtitle{
+            text-align:center;
+            color:#94a3b8;
+            margin-bottom:50px;
+        }
+
+        /* CONTROL PANEL TOOLS */
+        .tools-interface {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        .filter-select, .tool-btn {
+            padding: 12px 20px;
+            background: #0f172a;
+            color: white;
+            border: 1px solid #38bdf8;
+            border-radius: 12px;
+            font-size: 15px;
+            outline: none;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .tool-btn:hover {
+            background: #38bdf8;
+            color: #020617;
+        }
+        .tool-btn.active {
+            background: #e11d48;
+            color: white;
+            border-color: #e11d48;
+        }
+        .search-box input{
+            width:100%;
+            padding:12px 25px;
+            border:1px solid #38bdf8;
+            border-radius:12px;
+            outline:none;
+            background:#0f172a;
+            color:white;
+            font-size:15px;
+        }
+
+        /* GIS TOOL PANEL DISPLAY */
+        .gis-panel {
+            background: #0f172a;
+            border: 1px dashed #38bdf8;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .gis-panel h3 {
+            color: #38bdf8;
+            margin-bottom: 10px;
+        }
+        .gis-panel p {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        /* CARDS */
+        .card-container{
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+            gap:35px;
+        }
+        .card{
+            background:#0f172a;
+            border-radius:25px;
+            overflow:hidden;
+            transition:0.4s;
+            box-shadow:0 10px 30px rgba(0,0,0,0.3);
+        }
+        .card:hover{
+            transform:translateY(-10px);
+        }
+        .card img{
+            width:100%;
+            height:240px;
+            object-fit:cover;
+        }
+        .card-content{
+            padding:25px;
+        }
+        .card-content h3{
+            font-size:24px;
+            margin-bottom:12px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+        }
+        .card-content p{
+            color:#cbd5e1;
+            margin-bottom:18px;
+            line-height:1.6;
+            height: 75px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+        .meta-tag {
+            display: inline-block;
+            background: #1e293b;
+            color: #38bdf8;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        .price{
+            color:#38bdf8;
+            font-size:24px;
+            font-weight:600;
+            margin-bottom:20px;
+        }
+        .btn-group{
+            display:flex;
+            gap:10px;
+        }
+        .card-content button{
+            flex:1;
+            padding:12px;
+            border:none;
+            border-radius:12px;
+            color:white;
+            cursor:pointer;
+            transition:0.3s;
+            font-size:15px;
+        }
+        .card-content button:hover{
+            transform:scale(1.04);
+        }
+        .view-btn{
+            background:#2563eb;
+        }
+        .route-btn{
+            background:#00b4d8;
+        }
+
+        /* BOOKING */
+        .booking-box{
+            max-width:800px;
+            margin:auto;
+            background:#0f172a;
+            padding:50px;
+            border-radius:25px;
+        }
+        .booking-box form{
+            display:grid;
+            gap:20px;
+        }
+        .booking-box input,
+        .booking-box select{
+            padding:18px;
+            border:none;
+            border-radius:15px;
+            background:#020617;
+            color:white;
+            outline:none;
+            font-size:16px;
+        }
+        .booking-box button{
+            padding:18px;
+            border:none;
+            border-radius:15px;
+            background:linear-gradient(45deg,#00b4d8,#2563eb);
+            color:white;
+            font-size:18px;
+            cursor:pointer;
+        }
+
+        /* MAP */
+        #map{
+            height:75vh;
+            width:100%;
+            border-radius:25px;
+            overflow:hidden;
+            border:3px solid #0ea5e9;
+            box-shadow:0 10px 40px rgba(0,0,0,0.4);
+        }
+        .route-info{
+            margin-top:25px;
+            background:#0f172a;
+            padding:20px;
+            border-radius:20px;
+            text-align:center;
+            font-size:18px;
+            color:#38bdf8;
+        }
+
+        /* LEAFLET CONTAINER & WORKAROUNDS */
+        .leaflet-popup-content-wrapper {
+            background: #0f172a !important;
+            color: white !important;
+            border-radius: 12px;
+            border: 1px solid #38bdf8;
+        }
+        .leaflet-popup-tip {
+            background: #0f172a !important;
+        }
+        .popup-img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-top: 8px;
+        }
+        .leaflet-routing-container{
+            background:#0f172a !important;
+            color:white !important;
+            border-radius:15px;
+            border:none !important;
+        }
+        .leaflet-routing-alt{
+            color:white !important;
+        }
+
+        /* DYNAMIC GEOJSON TEXT LABEL STYLING */
+        .map-geojson-label {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            color: #38bdf8 !important;
+            font-weight: 600;
+            font-size: 13px;
+            text-shadow: -1px -1px 0 #020617, 1px -1px 0 #020617, -1px 1px 0 #020617, 1px 1px 0 #020617;
+            pointer-events: none;
+        }
+
+        /* FOOTER */
+        footer{
+            background:#01040d;
+            padding:40px;
+            text-align:center;
+            color:#94a3b8;
+        }
+
+        @media(max-width:768px){
+            nav{flex-direction:column;gap:10px;padding:12px 5%;}
+            .logo{font-size:20px;text-align:center;}
+            nav ul{gap:10px;flex-wrap:wrap;justify-content:center;}
+            nav ul li{font-size:14px;}
+            .hero-content h1{font-size:36px;}
+            .hero-content p{font-size:16px;}
+            .tools-interface{display:grid;grid-template-columns:1fr;gap:10px;}
+            .tool-btn,.filter-select{width:100%;min-height:50px;}
+            .search-box,.search-box input{width:100%;}
+            .card-container{grid-template-columns:1fr;}
+            .card img{height:180px;}
+            .card-content{padding:15px;}
+            .btn-group{flex-direction:column;}
+            .booking-box{padding:20px;}
+            .booking-box input,.booking-box select{padding:14px;}
+            #map{height:60vh;border-radius:15px;}
+            .leaflet-control-layers{max-width:180px;font-size:12px;}
+            .leaflet-routing-container{max-width:220px;max-height:250px;overflow-y:auto;}
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="logo">🌍 Nepal Tourism GIS</div>
+    <ul>
+        <li onclick="goTo('destinations')">Destinations</li>
+        <li onclick="goTo('booking')">Booking</li>
+        <li onclick="goTo('map-section')">Interactive GIS Map</li>
+    </ul>
+</nav>
+
+<div class="hero">
+    <div class="hero-content">
+        <h1>Discover <span>Nepal</span></h1>
+        <p>Advanced Spatial Querying, Buffer Analyses & Interactive Labeling GIS Engine</p>
+        <button class="hero-btn" onclick="goTo('destinations')">Launch Workspace</button>
+    </div>
+</div>
+
+<section id="destinations">
+    <h1 class="section-title">GIS Spatial Workspace</h1>
+    <p class="section-subtitle">Query vectors, extract topological measurements, and visualize labeled dynamic administration lines</p>
+
+    <div class="tools-interface">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="🔍 Search by name..." onkeyup="filterData()">
+        </div>
+        
+        <select id="categoryFilter" class="filter-select" onchange="filterData()">
+            <option value="">All Categories</option>
+            <option value="Heritage Site">Heritage Sites</option>
+            <option value="Nature & Lakes">Nature & Lakes</option>
+            <option value="Religious Site">Religious Sites</option>
+            <option value="Adventure & Wildlife">Adventure & Wildlife</option>
+            <option value="Trekking Route">Trekking Routes</option>
+        </select>
+
+        <select id="provinceFilter" class="filter-select" onchange="filterData()">
+            <option value="">All Provinces</option>
+            <option value="Bagmati">Bagmati Province</option>
+            <option value="Gandaki">Gandaki Province</option>
+            <option value="Lumbini">Lumbini Province</option>
+            <option value="Koshi">Koshi Province</option>
+        </select>
+
+        <button class="tool-btn" onclick="findNearestDestination()"><i class="fa-solid fa-location-crosshairs"></i> Nearest Node Finder</button>
+        <button class="tool-btn" id="bufferBtn" onclick="toggleBufferZone()"><i class="fa-solid fa-circle-dot"></i> 20km Zone Buffer</button>
+        <button class="tool-btn" id="measureBtn" onclick="toggleDistanceMeasurement()"><i class="fa-solid fa-ruler"></i> Measure Distance</button>
+        <button class="tool-btn" id="areaBtn" onclick="toggleAreaCalculation()"><i class="fa-solid fa-draw-polygon"></i> Calculate Area</button>
+    </div>
+
+    <div class="gis-panel" id="gisStatusPanel">
+        <h3>System Spatial Status</h3>
+        <p id="gisStatusText">Spatial components active. Select structural tools above or interact directly with the GIS Map below.</p>
+    </div>
+
+    <div class="card-container" id="cardContainer"></div>
+</section>
+
+<section id="booking">
+    <h1 class="section-title">Book Your Trip</h1>
+    <p class="section-subtitle">Professional Tourism Booking System</p>
+    <div class="booking-box">
+        <form id="bookingForm" onsubmit="event.preventDefault(); alert('Trip successfully booked!');">
+            <input type="text" id="customerName" placeholder="Enter Your Name" required>
+            <select id="destinationSelect" required>
+                <option value="">Select Destination</option>
+            </select>
+            <input type="number" placeholder="Number of Travelers" min="1" required>
+            <input type="date" required>
+            <button type="submit"><i class="fa-solid fa-plane"></i> Book Trip</button>
+        </form>
+    </div>
+</section>
+
+<section id="map-section">
+    <h1 class="section-title">Interactive GIS Navigation</h1>
+    <p class="section-subtitle">Toggle layer basemaps, view administration structures, analyze containment topologies, and manage active lines</p>
+    <div id="map"></div>
+    <div class="route-info" id="routeInfo">Select a destination card to generate spatial routes or use tools to draw on the grid layout framework.</div>
+</section>
+
+<footer>
+    © 2026 Nepal Tourism Route Planner | Advanced Engineering & Labeled Structural Spatial GIS Toolset
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+
+<script>
+const destinations = [
+    // ==========================================
+    // GANDAKI PROVINCE (10 NODES)
+    // ==========================================
+    {
+        name: "Pokhara Lakeside",
+        category: "Nature & Lakes",
+        district: "Kaski",
+        province: "Gandaki",
+        price: 150,
+        description: "Beautiful clean pristine lakes and premium panoramic mountain scenery view points.",
+        lat: 28.2096,
+        lon: 83.9856,
+        image: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Annapurna Base Camp",
+        category: "Trekking Route",
+        district: "Kaski",
+        province: "Gandaki",
+        price: 450,
+        description: "A spectacular high-altitude walk tucked straight into a massive wall of world peaks.",
+        lat: 28.5310,
+        lon: 83.8780,
+        image: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Muktinath Temple",
+        category: "Religious Site",
+        district: "Mustang",
+        province: "Gandaki",
+        price: 350,
+        description: "Sacred Vishnu temple located at an altitude of 3,710 meters at the foot of Thorong La pass.",
+        lat: 28.8166,
+        lon: 83.8715,
+        image: "https://images.unsplash.com/photo-1605640840605-14ac1855827b?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Gorkha Durbar",
+        category: "Heritage Site",
+        district: "Gorkha",
+        province: "Gandaki",
+        price: 90,
+        description: "The historical fortified palace birthplace of King Prithvi Narayan Shah, founder of modern Nepal.",
+        lat: 28.0051,
+        lon: 84.6367,
+        image: "https://images.unsplash.com/photo-1508193638397-1c4234db14d8?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Bandipur Old Town",
+        category: "Heritage Site",
+        district: "Tanahun",
+        province: "Gandaki",
+        price: 110,
+        description: "A living museum of Newari culture with beautifully preserved traditional architecture and streets.",
+        lat: 27.9405,
+        lon: 84.4140,
+        image: "https://images.unsplash.com/photo-1540959733332-eab4deceeaf7?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Ghandruk Village",
+        category: "Nature & Lakes",
+        district: "Kaski",
+        province: "Gandaki",
+        price: 130,
+        description: "A gorgeous Gurung cultural settlement showcasing stone houses and unmatched views of Machapuchare.",
+        lat: 28.3745,
+        lon: 83.8066,
+        image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Tilicho Lake",
+        category: "Nature & Lakes",
+        district: "Manang",
+        province: "Gandaki",
+        price: 480,
+        description: "One of the highest lakes in the world, sitting majestically at 4,919 meters in the Annapurna range.",
+        lat: 28.6894,
+        lon: 83.8522,
+        image: "https://images.unsplash.com/photo-1533105079780-92b9be482077?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Dhorpatan Hunting Reserve",
+        category: "Adventure & Wildlife",
+        district: "Baglung",
+        province: "Gandaki",
+        price: 400,
+        description: "The only controlled hunting reserve in Nepal, home to the exclusive blue sheep and scenic meadows.",
+        lat: 28.5392,
+        lon: 83.0234,
+        image: "https://images.unsplash.com/photo-1516426122078-c23e76319801?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Poon Hill Track",
+        category: "Trekking Route",
+        district: "Myagdi",
+        province: "Gandaki",
+        price: 220,
+        description: "World-class sunrise viewpoint capturing the entire Dhaulagiri and Annapurna Himalayan massifs.",
+        lat: 28.4001,
+        lon: 83.7003,
+        image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Triveni Dham",
+        category: "Religious Site",
+        district: "Nawalpur",
+        province: "Gandaki",
+        price: 80,
+        description: "A holy river confluence site drawing thousands of pilgrims for ritual bathing and meditation.",
+        lat: 27.4421,
+        lon: 83.9185,
+        image: "https://images.unsplash.com/photo-1545205597-3d9d02c29597?q=80&w=1200&auto=format&fit=crop"
+    },
+
+    // ==========================================
+    // BAGMATI PROVINCE (10 NODES)
+    // ==========================================
+    {
+        name: "Kathmandu Durbar Square",
+        category: "Heritage Site",
+        district: "Kathmandu",
+        province: "Bagmati",
+        price: 120,
+        description: "Ancient historical and cultural world heritage palace structural complex.",
+        lat: 27.7042,
+        lon: 85.3072,
+        image: "https://images.unsplash.com/photo-1605640840605-14ac1855827b?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Chitwan National Park",
+        category: "Adventure & Wildlife",
+        district: "Chitwan",
+        province: "Bagmati",
+        price: 180,
+        description: "Subtropical wild protective forest safari and exotic wild jungle adventures.",
+        lat: 27.5291,
+        lon: 84.3542,
+        image: "https://images.unsplash.com/photo-1516426122078-c23e76319801?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Pashupatinath Temple",
+        category: "Religious Site",
+        district: "Kathmandu",
+        province: "Bagmati",
+        price: 100,
+        description: "The supreme sacred dynamic temple system complex dedicated to Lord Shiva along the Bagmati River.",
+        lat: 27.7104,
+        lon: 85.3487,
+        image: "https://images.unsplash.com/photo-1561361530-c1130522db9c?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Langtang Valley Path",
+        category: "Trekking Route",
+        district: "Rasuwa",
+        province: "Bagmati",
+        price: 380,
+        description: "A gorgeous alpine tracking gorge closely bounded by towering ice walls and Tamang settlements.",
+        lat: 28.2173,
+        lon: 85.5674,
+        image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Boudhanath Stupa",
+        category: "Religious Site",
+        district: "Kathmandu",
+        province: "Bagmati",
+        price: 50,
+        description: "One of the largest spherical stupas in the world, anchoring Tibetan Buddhism within Kathmandu.",
+        lat: 27.7215,
+        lon: 85.3620,
+        image: "https://images.unsplash.com/photo-1545205597-3d9d02c29597?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Bhaktapur Durbar Square",
+        category: "Heritage Site",
+        district: "Bhaktapur",
+        province: "Bagmati",
+        price: 130,
+        description: "An open-air museum of medieval art and structural layout styling, famous for pottery and woodcarvings.",
+        lat: 27.6722,
+        lon: 85.4278,
+        image: "https://images.unsplash.com/photo-1508193638397-1c4234db14d8?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Patan Durbar Square",
+        category: "Heritage Site",
+        district: "Lalitpur",
+        province: "Bagmati",
+        price: 120,
+        description: "Marvel of Newar architecture marvel filled with ancient stone carvings, bronze structures, and courtyards.",
+        lat: 27.6744,
+        lon: 85.3253,
+        image: "https://images.unsplash.com/photo-1540959733332-eab4deceeaf7?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Swayambhunath Stupa",
+        category: "Religious Site",
+        district: "Kathmandu",
+        province: "Bagmati",
+        price: 60,
+        description: "The ancient hilltop 'Monkey Temple' providing complete geographical cross-section views of Kathmandu.",
+        lat: 27.7149,
+        lon: 85.2904,
+        image: "https://images.unsplash.com/photo-1589308078059-be1415eab4c3?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Nagarkot Ridge View",
+        category: "Nature & Lakes",
+        district: "Bhaktapur",
+        province: "Bagmati",
+        price: 95,
+        description: "Premium panoramic ridge viewpoint famous for sunrise framing views of Mount Everest and the Central Himalaya.",
+        lat: 27.7124,
+        lon: 85.5230,
+        image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Shivapuri National Park",
+        category: "Adventure & Wildlife",
+        district: "Kathmandu",
+        province: "Bagmati",
+        price: 70,
+        description: "A wild forest watershed reserve safeguarding rare orchid species, leopards, and tracking trails.",
+        lat: 27.8012,
+        lon: 85.3855,
+        image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1200&auto=format&fit=crop"
+    },
+
+    // ==========================================
+    // LUMBINI PROVINCE (10 NODES)
+    // ==========================================
+    {
+        name: "Lumbini Maya Devi Temple",
+        category: "Religious Site",
+        district: "Rupandehi",
+        province: "Lumbini",
+        price: 200,
+        description: "The universally revered structural birthplace grounds of Gautama Lord Buddha.",
+        lat: 27.4833,
+        lon: 83.2760,
+        image: "https://images.unsplash.com/photo-1589308078059-be1415eab4c3?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Bardia National Park",
+        category: "Adventure & Wildlife",
+        district: "Bardia",
+        province: "Lumbini",
+        price: 250,
+        description: "The largest undisturbed wilderness in lowland Terai, safeguarding wild Royal Bengal Tigers.",
+        lat: 28.4639,
+        lon: 81.4553,
+        image: "https://images.unsplash.com/photo-1516426122078-c23e76319801?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Tansen Palpa Town",
+        category: "Heritage Site",
+        district: "Palpa",
+        province: "Lumbini",
+        price: 100,
+        description: "A charming hill town famous for traditional Dhaka weaving fabrics and Rani Mahal palace ruins.",
+        lat: 27.8682,
+        lon: 83.5484,
+        image: "https://images.unsplash.com/photo-1508193638397-1c4234db14d8?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Jagadishpur Wetland",
+        category: "Nature & Lakes",
+        district: "Kapilvastu",
+        province: "Lumbini",
+        price: 85,
+        description: "A massive, Ramsar-listed reservoir crucial for thousands of migratory bird species.",
+        lat: 27.6162,
+        lon: 83.1022,
+        image: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Swargadwari Complex",
+        category: "Religious Site",
+        district: "Pyuthan",
+        province: "Lumbini",
+        price: 140,
+        description: "Hilltop temple sanctuary famous for its holy eternal fire and Vedic sacrificial altars.",
+        lat: 28.0831,
+        lon: 82.6953,
+        image: "https://images.unsplash.com/photo-1545205597-3d9d02c29597?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Tilaurakot Fort Palace",
+        category: "Heritage Site",
+        district: "Kapilvastu",
+        province: "Lumbini",
+        price: 110,
+        description: "Archaeological ruins of the ancient capital of the Shakya kingdom, where Prince Siddhartha lived.",
+        lat: 27.5739,
+        lon: 83.0061,
+        image: "https://images.unsplash.com/photo-1605640840605-14ac1855827b?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Banke National Park",
+        category: "Adventure & Wildlife",
+        district: "Banke",
+        province: "Lumbini",
+        price: 160,
+        description: "A vital tiger conservation habitat link connected directly into a wider cross-border ecosystem grid.",
+        lat: 28.1824,
+        lon: 81.9322,
+        image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Rani Mahal Palace",
+        category: "Heritage Site",
+        district: "Palpa",
+        province: "Lumbini",
+        price: 125,
+        description: "The 'Taj Mahal of Nepal' built directly over a sheer rock face along the emerald Kali Gandaki River.",
+        lat: 27.9254,
+        lon: 83.5264,
+        image: "https://images.unsplash.com/photo-1540959733332-eab4deceeaf7?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Satyawati Lake",
+        category: "Nature & Lakes",
+        district: "Palpa",
+        province: "Lumbini",
+        price: 90,
+        description: "A mysterious religious forest lake famous for nocturnal pilgrimage shouting rituals.",
+        lat: 27.7550,
+        lon: 83.5822,
+        image: "https://images.unsplash.com/photo-1533105079780-92b9be482077?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Jaljala Mountain Route",
+        category: "Trekking Route",
+        district: "Rolpa",
+        province: "Lumbini",
+        price: 320,
+        description: "An off-the-beaten-path mountain track offering breathtaking views of the Dhaulagiri range and rich wetlands.",
+        lat: 28.5122,
+        lon: 82.6841,
+        image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1200&auto=format&fit=crop"
+    },
+
+    // ==========================================
+    // KOSHI PROVINCE (10 NODES)
+    // ==========================================
+    {
+        name: "Everest Base Camp Route",
+        category: "Trekking Route",
+        district: "Solukhumbu",
+        province: "Koshi",
+        price: 500,
+        description: "World famous extreme Himalayan high altitudinal trekking trailing route.",
+        lat: 27.9881,
+        lon: 86.9250,
+        image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Pathibhara Devi Temple",
+        category: "Religious Site",
+        district: "Taplejung",
+        province: "Koshi",
+        price: 240,
+        description: "A highly revered mountain hilltop shrine sitting at 3,794 meters, granting powerful wishes.",
+        lat: 27.4255,
+        lon: 87.7722,
+        image: "https://images.unsplash.com/photo-1545205597-3d9d02c29597?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Koshi Tappu Reserve",
+        category: "Adventure & Wildlife",
+        district: "Sunsari",
+        province: "Koshi",
+        price: 170,
+        description: "Beautiful riverine mudflats safeguarding the last remaining population of wild water buffaloes.",
+        lat: 26.6562,
+        lon: 86.9944,
+        image: "https://images.unsplash.com/photo-1516426122078-c23e76319801?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Ilam Tea Gardens",
+        category: "Nature & Lakes",
+        district: "Ilam",
+        province: "Koshi",
+        price: 130,
+        description: "Rolling velvet tea estates, misty landscapes, and rich cultural biodiversity.",
+        lat: 26.9113,
+        lon: 87.9238,
+        image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Barahachhetra Temple",
+        category: "Religious Site",
+        district: "Sunsari",
+        province: "Koshi",
+        price: 80,
+        description: "Sacred Varaha incarnation temple located at the dynamic junction of Sapta Koshi river forks.",
+        lat: 26.8741,
+        lon: 87.1512,
+        image: "https://images.unsplash.com/photo-1589308078059-be1415eab4c3?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Makalu Barun Valley",
+        category: "Trekking Route",
+        district: "Sankhuwasabha",
+        province: "Koshi",
+        price: 460,
+        description: "An isolated trail system showcasing outstanding deep green gorges and glaciers beneath Mount Makalu.",
+        lat: 27.7012,
+        lon: 87.1524,
+        image: "https://images.unsplash.com/photo-1533105079780-92b9be482077?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Mai Pokhari Lake",
+        category: "Nature & Lakes",
+        district: "Ilam",
+        province: "Koshi",
+        price: 110,
+        description: "A star-shaped holy wetland lake surrounded by pristine, dense emerald pine forests.",
+        lat: 27.0064,
+        lon: 87.9312,
+        image: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Halesi Mahadev Cave",
+        category: "Religious Site",
+        district: "Khotang",
+        province: "Koshi",
+        price: 190,
+        description: "The 'Pashupatinath of Eastern Nepal' located inside a massive natural limestone cave structure.",
+        lat: 27.1945,
+        lon: 86.6231,
+        image: "https://images.unsplash.com/photo-1561361530-c1130522db9c?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Bhedetar Hill Station",
+        category: "Nature & Lakes",
+        district: "Dhankuta",
+        province: "Koshi",
+        price: 90,
+        description: "A popular hill station famed for its continuous cool breeze, dense fog, and mountain views.",
+        lat: 26.8525,
+        lon: 87.3312,
+        image: "https://images.unsplash.com/photo-1540959733332-eab4deceeaf7?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+        name: "Kanchenjunga Base Route",
+        category: "Trekking Route",
+        district: "Taplejung",
+        province: "Koshi",
+        price: 550,
+        description: "Wild wilderness exploration route leading to the base of the world's third highest peak.",
+        lat: 27.7022,
+        lon: 88.1466,
+        image: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=1200&auto=format&fit=crop"
+    }
+];
+
+/* CHANNELS AND LAYERS CONFIGURATION */
+const openStreetMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' });
+const satelliteMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles © Esri' });
+const terrainMap = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { attribution: '© OpenTopoMap' });
+
+// Mock Provincial Mock Boundary structures if external server files are missing locally
+let mockProvincesGeoJSON = {
+    "type": "FeatureCollection",
+    "features": [
+        { "type": "Feature", "properties": { "name": "Gandaki Province" }, "geometry": { "type": "Polygon", "coordinates": [[[83.0, 27.5], [85.0, 27.5], [85.0, 29.2], [83.0, 29.2], [83.0, 27.5]]] } },
+        { "type": "Feature", "properties": { "name": "Bagmati Province" }, "geometry": { "type": "Polygon", "coordinates": [[[84.5, 27.0], [86.5, 27.0], [86.5, 28.5], [84.5, 28.5], [84.5, 27.0]]] } },
+        { "type": "Feature", "properties": { "name": "Lumbini Province" }, "geometry": { "type": "Polygon", "coordinates": [[[81.0, 27.3], [84.0, 27.3], [84.0, 28.8], [81.0, 28.8], [81.0, 27.3]]] } },
+        { "type": "Feature", "properties": { "name": "Koshi Province" }, "geometry": { "type": "Polygon", "coordinates": [[[86.0, 26.3], [88.5, 26.3], [88.5, 28.2], [86.0, 28.2], [86.0, 26.3]]] } }
+    ]
+};
+
+// Initialize target boundary layers
+const provinceLayer = L.layerGroup();
+const districtLayer = L.layerGroup();
+const localLevelLayer = L.layerGroup();
+
+// Initialize Map with layers loaded by default
+const map = L.map('map', {
+    center: [27.8500, 85.3000],
+    zoom: 7,
+    layers: [openStreetMap]
+});
+
+// Fallback logic to process GeoJSON strings, apply styles, and dynamically read text properties
+function loadLayerData(filename, structuralLayer, fallbackData) {
+    fetch(filename)
+        .then(res => { if (!res.ok) throw new Error(); return res.json(); })
+        .then(geojson => { addGeoJsonWithLabels(geojson, structuralLayer); })
+        .catch(() => {
+            if(fallbackData) { 
+                addGeoJsonWithLabels(fallbackData, structuralLayer); 
+            }
+        });
+}
+
+// Global Parser function to bind attributes to map center calculations
+function addGeoJsonWithLabels(geojson, targetLayer) {
+    L.geoJSON(geojson, {
+        style: { 
+            color: "#38bdf8", 
+            weight: 2, 
+            fillOpacity: 0.03, 
+            dashArray: "3" 
+        },
+        onEachFeature: function (feature, layer) {
+            const layerName = feature.properties.name || feature.properties.NAME || feature.properties.hrname || feature.properties.DISTRICT;
+            if (layerName) {
+                layer.bindTooltip(layerName, {
+                    permanent: true,
+                    direction: "center",
+                    className: "map-geojson-label"
+                });
+            }
+        }
+    }).addTo(targetLayer);
+}
+
+// Run loader directives across layer stacks
+loadLayerData('provinces.geojson', provinceLayer, mockProvincesGeoJSON);
+loadLayerData('districts.geojson', districtLayer, null);
+loadLayerData('local.geojson', localLevelLayer, null);
+
+// Setup Control Toggle Interface Element Groupings
+const baseMapsGroup = { "Standard OpenStreetMap": openStreetMap, "High-Res Satellite Imagery": satelliteMap, "Topographic Terrain Map": terrainMap };
+const overlayLayersGroup = { "Province Boundaries": provinceLayer, "District Boundaries": districtLayer, "Local Level Boundaries": localLevelLayer };
+L.control.layers(baseMapsGroup, overlayLayersGroup, { collapsed: true }).addTo(map);
+
+/* DOM MANIPULATIONS & SEARCH FUNCTIONS */
+const cardContainer = document.getElementById("cardContainer");
+const destinationSelect = document.getElementById("destinationSelect");
+const routeInfo = document.getElementById("routeInfo");
+const gisStatusText = document.getElementById("gisStatusText");
+
+let markersLayer = L.layerGroup().addTo(map);
+let bufferLayer = L.layerGroup().addTo(map);
+let interactiveDrawLayer = L.layerGroup().addTo(map);
+
+let routingControl;
+let currentLocationMarker;
+
+// Tracking state variables for analysis operations
+let isBufferActive = false;
+let isMeasuringDistance = false;
+let isCalculatingArea = false;
+let measurementPoints = [];
+let measurementLine = null;
+let areaPolygon = null;
+
+function displayDestinations(data) {
+    cardContainer.innerHTML = "";
+    markersLayer.clearLayers();
+
+    data.forEach(d => {
+        cardContainer.innerHTML += `
+            <div class="card">
+                <img src="${d.image}">
+                <div class="card-content">
+                    <span class="meta-tag"><i class="fa-solid fa-tags"></i> ${d.category}</span>
+                    <span class="meta-tag" style="background:#0369a1;"><i class="fa-solid fa-map"></i> ${d.district}, ${d.province}</span>
+                    <h3>${d.name}</h3>
+                    <p>${d.description}</p>
+                    <div class="price">$${d.price}</div>
+                    <div class="btn-group">
+                        <button class="view-btn" onclick="showLocation(${d.lat},${d.lon})"><i class="fa-solid fa-location-dot"></i> View</button>
+                        <button class="route-btn" onclick="showRoute(${d.lat},${d.lon},'${d.name}')"><i class="fa-solid fa-route"></i> Route</button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        const popupContent = `
+            <div style="color:white; font-family:'Poppins'; min-width:200px;">
+                <h4 style="color:#38bdf8; margin:0 0 4px 0;">${d.name}</h4>
+                <small style="color:#cbd5e1;"><b>Category:</b> ${d.category}</small><br>
+                <small style="color:#cbd5e1;"><b>Region:</b> ${d.district}, ${d.province}</small><br>
+                <p style="font-size:12px; margin:6px 0; color:#cbd5e1; max-height: 50px; overflow: hidden;">${d.description}</p>
+                <img src="${d.image}" class="popup-img">
+                <button onclick="checkPointInPolygon(${d.lat}, ${d.lon}, '${d.name}')" style="margin-top:8px; width:100%; padding:6px; font-size:11px; background:#10b981; border:none; border-radius:6px; color:white; cursor:pointer; font-weight:500;">Run Topology Audit</button>
+            </div>
+        `;
+
+        L.marker([d.lat, d.lon]).bindPopup(popupContent).addTo(markersLayer);
+    });
+}
+
+function filterData() {
+    const nameKeyword = document.getElementById("searchInput").value.toLowerCase();
+    const selectedCategory = document.getElementById("categoryFilter").value;
+    const selectedProvince = document.getElementById("provinceFilter").value;
+
+    const filtered = destinations.filter(d => {
+        const matchesName = d.name.toLowerCase().includes(nameKeyword);
+        const matchesCategory = selectedCategory === "" ? true : d.category === selectedCategory;
+        const matchesProvince = selectedProvince === "" ? true : d.province === selectedProvince;
+        return matchesName && matchesCategory && matchesProvince;
+    });
+    displayDestinations(filtered);
+}
+
+// Populate Dropdown selector
+destinations.forEach(d => {
+    destinationSelect.innerHTML += `<option value="${d.name}">${d.name} (${d.province})</option>`;
+});
+
+function showLocation(lat, lon) {
+    map.setView([lat, lon], 12);
+    goTo('map-section');
+}
+
+/* SPATIAL ANALYTICAL FUNCTIONS */
+
+// 1. NEAREST LOCATION/NODE FINDER
+function findNearestDestination() {
+    const center = map.getCenter();
+    const targetPoint = turf.point([center.lng, center.lat]);
+    
+    let targetFeatures = [];
+    destinations.forEach((d, index) => {
+        targetFeatures.push(turf.point([d.lon, d.lat], {id: index, name: d.name}));
+    });
+    
+    const pointsCollection = turf.featureCollection(targetFeatures);
+    const nearest = turf.nearestPoint(targetPoint, pointsCollection);
+    const destinationIndex = nearest.properties.id;
+    const matchedDest = destinations[destinationIndex];
+    
+    map.setView([matchedDest.lat, matchedDest.lon], 13);
+    L.popup()
+        .setLatLng([matchedDest.lat, matchedDest.lon])
+        .setContent(`<div style="color:white;">🎯 <b>Nearest Spot Node Found:</b> ${matchedDest.name}</div>`)
+        .openOn(map);
+
+    gisStatusText.innerText = `Nearest node analysis targeted point [${matchedDest.name}] relative to the current map view viewport axis.`;
+}
+
+// 2. BUFFER RADIUS ANALYZER
+function toggleBufferZone() {
+    const btn = document.getElementById("bufferBtn");
+    if (!isBufferActive) {
+        bufferLayer.clearLayers();
+        destinations.forEach(d => {
+            const point = turf.point([d.lon, d.lat]);
+            const buffered = turf.buffer(point, 20, {units: 'kilometers'});
+            L.geoJSON(buffered, { style: { color: "#ff0055", weight: 2, fillColor: "#ff0055", fillOpacity: 0.08 } }).addTo(bufferLayer);
+        });
+        btn.classList.add("active");
+        gisStatusText.innerText = "Applied 20KM spatial boundary buffer polygons around all coordinates.";
+        isBufferActive = true;
+    } else {
+        bufferLayer.clearLayers();
+        btn.classList.remove("active");
+        gisStatusText.innerText = "Cleared buffer overlay structures from viewport.";
+        isBufferActive = false;
+    }
+}
+
+// 3. LIVE ROUTE & SPATIAL ROUTE LENGTH COMPUTATION
+function showRoute(destLat, destLon, destName) {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            const userLat = position.coords.latitude;
+            const userLon = position.coords.longitude;
+
+            if (routingControl) map.removeControl(routingControl);
+            if (currentLocationMarker) map.removeLayer(currentLocationMarker);
+
+            currentLocationMarker = L.marker([userLat, userLon]).addTo(map).bindPopup("📍 Resolved Device Position").openPopup();
+
+            routingControl = L.Routing.control({
+                waypoints: [ L.latLng(userLat, userLon), L.latLng(destLat, destLon) ],
+                router: L.Routing.osrmv1({ serviceUrl: 'https://router.project-osrm.org/route/v1' }),
+                lineOptions: { styles: [{ color: '#38bdf8', opacity: 0.9, weight: 6 }] },
+                routeWhileDragging: false,
+                addWaypoints: false,
+                fitSelectedRoutes: true,
+                show: false,
+                createMarker: function() { return null; }
+            }).addTo(map);
+
+            const distanceKM = map.distance([userLat, userLon], [destLat, destLon]) / 1000;
+            routeInfo.innerHTML = `📍 Route Analysis: Origin &rarr; <b>${destName}</b><br><br>🚗 Calculated Path Route Length Dimension: <b>${distanceKM.toFixed(2)} km</b>`;
+            goTo('map-section');
+        }, function(error) {
+            alert("Location tracking authorization denied or response timed out. Plotting using fallback center coordinates.");
+            // Fallback route routing from Kathmandu center if geo tracker fails
+            if (routingControl) map.removeControl(routingControl);
+            routingControl = L.Routing.control({
+                waypoints: [ L.latLng(27.7172, 85.3240), L.latLng(destLat, destLon) ],
+                router: L.Routing.osrmv1({ serviceUrl: 'https://router.project-osrm.org/route/v1' }),
+                lineOptions: { styles: [{ color: '#38bdf8', opacity: 0.9, weight: 6 }] },
+                routeWhileDragging: false,
+                show: false,
+                createMarker: function() { return null; }
+            }).addTo(map);
+            goTo('map-section');
+        }, { enableHighAccuracy: true });
+    }
+}
+
+// 4. MAP INTERACTIVE DISTANCE MEASUREMENT TOOL
+function toggleDistanceMeasurement() {
+    resetInteractiveTools();
+    const btn = document.getElementById("measureBtn");
+    if (!isMeasuringDistance) {
+        isMeasuringDistance = true;
+        btn.classList.add("active");
+        gisStatusText.innerText = "Distance Tool Active: Click multiple target points on the map layout grid to draw lines.";
+    } else {
+        isMeasuringDistance = false;
+        btn.classList.remove("active");
+    }
+}
+
+// 5. POLYGON AREA GEOMETRY CALCULATION
+function toggleAreaCalculation() {
+    resetInteractiveTools();
+    const btn = document.getElementById("areaBtn");
+    if (!isCalculatingArea) {
+        isCalculatingArea = true;
+        btn.classList.add("active");
+        gisStatusText.innerText = "Area Tool Active: Click 3 or more points on the map. Double click to close and calculate area.";
+    } else {
+        isCalculatingArea = false;
+        btn.classList.remove("active");
+    }
+}
+
+// 6. POINT-IN-POLYGON VECTOR CONTAINER ANALYSIS
+function checkPointInPolygon(lat, lon, name) {
+    const pt = turf.point([lon, lat]);
+    let insideMatch = "None (Outside active vector layout matrix boundaries)";
+    
+    mockProvincesGeoJSON.features.forEach(f => {
+        if(turf.booleanPointInPolygon(pt, f)) {
+            insideMatch = f.properties.name;
+        }
+    });
+    
+    alert(`[Topology Check Result]\nDestination Node: ${name}\nIntersecting Boundary: ${insideMatch}`);
+    gisStatusText.innerText = `Audited point-in-polygon assignment calculation loop for target vector [${name}]. Found inside: ${insideMatch}`;
+}
+
+function resetInteractiveTools() {
+    isMeasuringDistance = false;
+    isCalculatingArea = false;
+    document.getElementById("measureBtn").classList.remove("active");
+    document.getElementById("areaBtn").classList.remove("active");
+    interactiveDrawLayer.clearLayers();
+    measurementPoints = [];
+    if(measurementLine) { map.removeLayer(measurementLine); measurementLine = null; }
+    if(areaPolygon) { map.removeLayer(areaPolygon); areaPolygon = null; }
+}
+
+// Map Event Interactivity Listener Binding
+map.on('click', function(e) {
+    const lat = e.latlng.lat;
+    const lon = e.latlng.lng;
+
+    if (isMeasuringDistance) {
+        measurementPoints.push([lat, lon]);
+        L.circleMarker([lat, lon], {color: '#e11d48', radius: 5}).addTo(interactiveDrawLayer);
+        
+        if (measurementPoints.length > 1) {
+            if (measurementLine) map.removeLayer(measurementLine);
+            measurementLine = L.polyline(measurementPoints, {color: '#e11d48', weight: 4}).addTo(interactiveDrawLayer);
+            
+            let turfCoords = measurementPoints.map(p => [p[1], p[0]]);
+            let lineString = turf.lineString(turfCoords);
+            let length = turf.length(lineString, {units: 'kilometers'});
+            
+            gisStatusText.innerText = `Line string path mapped. Measured Total Distance: ${length.toFixed(3)} km`;
+        }
+    }
+    
+    else if (isCalculatingArea) {
+        measurementPoints.push([lon, lat]); // Turf geometry format mappings expect [lon, lat]
+        L.circleMarker([lat, lon], {color: '#10b981', radius: 5}).addTo(interactiveDrawLayer);
+        
+        if (measurementPoints.length >= 3) {
+            if (areaPolygon) map.removeLayer(areaPolygon);
+            
+            let closedCoords = [...measurementPoints, measurementPoints[0]];
+            let poly = turf.polygon([closedCoords]);
+            let calculatedArea = turf.area(poly) / 1000000; // Transform square meters to square kilometers
+            
+            let leafletCoords = measurementPoints.map(p => [p[1], p[0]]);
+            areaPolygon = L.polygon(leafletCoords, {color: '#10b981', fillColor: '#10b981', fillOpacity: 0.3}).addTo(interactiveDrawLayer);
+            
+            gisStatusText.innerText = `Polygon closure calculated interface area dimensions: ${calculatedArea.toFixed(2)} sq km`;
+        }
+    }
+});
+
+map.on('dblclick', function() {
+    if (isMeasuringDistance || isCalculatingArea) {
+        gisStatusText.innerText += " | Geometry layout structure locked and closed.";
+        measurementPoints = [];
+    }
+});
+
+function goTo(id) {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+}
+
+// Initial Run configuration
+displayDestinations(destinations);
+</script>
+
+</body>
+</html>
